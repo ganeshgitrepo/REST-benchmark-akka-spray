@@ -1,0 +1,12 @@
+# SBT files.
+target/
+/project/boot/
+/project/plugins/project/
+
+# IDEA project files.
+/.idea
+/.idea_modules
+/*.iml
+
+# OSX Finder droppings.
+.DS_Store

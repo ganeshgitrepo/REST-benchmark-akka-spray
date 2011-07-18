@@ -13,6 +13,7 @@ CONC=50
 
 JSON="${DIR}/sample-4.json"
 BASEURL='http://localhost:8080'
+#BASEURL='http://localhost:8080/rest-bench-ref'
 
 # This is the ping -> pong service
 ab -r -n "${REQ}" -c "${CONC}" "${BASEURL}/ping"

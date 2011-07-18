@@ -23,19 +23,19 @@ ab -r -n "${REQ}" -c "${CONC}" "${BASEURL}/missing"
 ab -r -n "${REQ}" -c "${CONC}" -k "${BASEURL}/missing"
 
 # This is a 404, via missing record.
-ab -r -n "${REQ}" -c "${CONC}" "${BASEURL}/get/1013131"
-ab -r -n "${REQ}" -c "${CONC}" -k "${BASEURL}/get/1013131"
+ab -r -n "${REQ}" -c "${CONC}" "${BASEURL}/rest/get/1013131"
+ab -r -n "${REQ}" -c "${CONC}" -k "${BASEURL}/rest/get/1013131"
 
 # This is a 409, via record/id mismatch.
-ab -r -n "${REQ}" -c "${CONC}" -p "${JSON}" -T "application/json" "${BASEURL}/put/9"
-ab -r -n "${REQ}" -c "${CONC}" -p "${JSON}" -T "application/json" -k "${BASEURL}/put/9"
+ab -r -n "${REQ}" -c "${CONC}" -p "${JSON}" -T "application/json" "${BASEURL}/rest/put/9"
+ab -r -n "${REQ}" -c "${CONC}" -p "${JSON}" -T "application/json" -k "${BASEURL}/rest/put/9"
 
 # This is uploading a record.
-ab -r -n "${REQ}" -c "${CONC}" -p "${JSON}" -T "application/json" "${BASEURL}/put/4"
-ab -r -n "${REQ}" -c "${CONC}" -p "${JSON}" -T "application/json" -k "${BASEURL}/put/4"
+ab -r -n "${REQ}" -c "${CONC}" -p "${JSON}" -T "application/json" "${BASEURL}/rest/put/4"
+ab -r -n "${REQ}" -c "${CONC}" -p "${JSON}" -T "application/json" -k "${BASEURL}/rest/put/4"
 
 # This is fetching a record.
-ab -r -n "${REQ}" -c "${CONC}" "${BASEURL}/get/4"
-ab -r -n "${REQ}" -c "${CONC}" -k "${BASEURL}/get/4"
+ab -r -n "${REQ}" -c "${CONC}" "${BASEURL}/rest/get/4"
+ab -r -n "${REQ}" -c "${CONC}" -k "${BASEURL}/rest/get/4"
 
 # End.

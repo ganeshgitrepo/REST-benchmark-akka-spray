@@ -10,7 +10,7 @@ seq(webSettings :_*)
 
 resolvers ++= Seq(
   ScalaToolsSnapshots,
-  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases"
+  "Akka Repository" at "http://akka.io/repository"
 )
 
 libraryDependencies ++= Seq(

@@ -22,3 +22,5 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % "8.0.0.M3" % "jetty"
 )
 
+// The snapshots frequently have incorrect checksums; ignore them.
+checksums := Nil

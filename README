@@ -1,0 +1,16 @@
+Akka/Spray Implementation for theRESTbakeOff[tm]
+
+To build and run this project you need sbt 0.10.1:
+
+% sbt
+...
+> update
+...
+> jetty-run
+
+The WAR can also be deployed to any container that supports the
+Servlet 3.0 spec; at the moment this is how asynchronous request
+processing is supported.
+
+The initial implementation uses an in-memory hash table, just like
+the reference implementation.

@@ -10,6 +10,8 @@ object MongoDBLoader {
 
 
   def doWithSnippet(coll:MongoCollection)(dbObj:BasicDBObject) = {
+    val intN = dbObj.get("intNumber").asInstanceOf[Long]
+    dbObj.append("intNumber", intN.toInt)
     coll.insert(dbObj)
   }
 

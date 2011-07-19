@@ -10,7 +10,7 @@ import RecordJsonProtocol._
 
 trait RestService extends Directives with SprayJsonMarshalling {
 
-  val recordStore: RecordStore = HashMapRecordStore
+  val recordStore: RecordStore
 
   val restService = {
     // Debugging: /ping -> pong
@@ -21,10 +21,10 @@ trait RestService extends Directives with SprayJsonMarshalling {
     pathPrefix("rest") {
       path("get" / LongNumber) { id =>
         get { ctx =>
-          recordStore.get(id) match {
+          recordStore.get(id).onComplete(f => f.result.get match {
             case Some(record) => ctx.complete(record)
             case None => ctx.fail(StatusCodes.NotFound,"Record with id=" + id + " is not in database.")
-          }
+          })
         }
       } ~
       path("put" / LongNumber) { id =>

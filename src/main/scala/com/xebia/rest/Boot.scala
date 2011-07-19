@@ -8,8 +8,10 @@ import utils.ActorHelpers._
 
 class Boot {
 
+  val memoryHashStore = MemoryHashStore
+
   val mainModule = new RestService {
-    // TODO: Bake the module cake.
+    val recordStore = memoryHashStore
   }
 
   // Start all actors that need supervision, including the root service actor.
@@ -17,7 +19,8 @@ class Boot {
     SupervisorConfig(
       OneForOneStrategy(List(classOf[Exception]), 3, 100),
       List(
-        Supervise(actorOf[RootService], Permanent)
+        Supervise(actorOf[RootService], Permanent),
+        Supervise(memoryHashStore.storeActor, Permanent)
       )
     )
   )

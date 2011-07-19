@@ -10,7 +10,7 @@ import RecordJsonProtocol._
 
 trait RestService extends Directives with SprayJsonMarshalling {
 
-  val records = new collection.mutable.HashMap[Long,Record]()
+  val recordStore: RecordStore = HashMapRecordStore
 
   val restService = {
     // Debugging: /ping -> pong
@@ -21,7 +21,7 @@ trait RestService extends Directives with SprayJsonMarshalling {
     pathPrefix("rest") {
       path("get" / LongNumber) { id =>
         get { ctx =>
-          records.get(id) match {
+          recordStore.get(id) match {
             case Some(record) => ctx.complete(record)
             case None => ctx.fail(StatusCodes.NotFound,"Record with id=" + id + " is not in database.")
           }
@@ -31,7 +31,7 @@ trait RestService extends Directives with SprayJsonMarshalling {
         post {
           content(as[Record]) { record =>
             if (record.id == id) {
-              records += ((id, record))
+              recordStore.put(id, record)
               _.complete("")
             } else {
               _.fail(StatusCodes.Conflict, "The resource ID and ID of the POSTed record do not match.")

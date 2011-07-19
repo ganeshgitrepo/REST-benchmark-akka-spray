@@ -1,7 +1,7 @@
 package com.xebia.rest
 
 import cc.spray._
-import directives.IntNumber
+import directives.LongNumber
 import http._
 import MediaTypes._
 import marshalling.SprayJsonMarshalling
@@ -10,7 +10,7 @@ import RecordJsonProtocol._
 
 trait RestService extends Directives with SprayJsonMarshalling {
 
-  val records = new collection.mutable.HashMap[Int,Record]()
+  val records = new collection.mutable.HashMap[Long,Record]()
 
   val restService = {
     // Debugging: /ping -> pong
@@ -19,7 +19,7 @@ trait RestService extends Directives with SprayJsonMarshalling {
     } ~
     // Service implementation.
     pathPrefix("rest") {
-      path("get" / IntNumber) { id =>
+      path("get" / LongNumber) { id =>
         get { ctx =>
           records.get(id) match {
             case Some(record) => ctx.complete(record)
@@ -27,7 +27,7 @@ trait RestService extends Directives with SprayJsonMarshalling {
           }
         }
       } ~
-      path("put" / IntNumber) { id =>
+      path("put" / LongNumber) { id =>
         post {
           content(as[Record]) { record =>
             if (record.id == id) {

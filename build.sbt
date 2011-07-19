@@ -19,7 +19,8 @@ libraryDependencies ++= Seq(
   "cc.spray.json" %% "spray-json" % "1.0" % "compile" withSources(),
   "se.scalablesolutions.akka" % "akka-actor" % "1.1.3",
   "se.scalablesolutions.akka" % "akka-http" % "1.1.3",
-  "org.eclipse.jetty" % "jetty-webapp" % "8.0.0.M3" % "jetty"
+  "org.eclipse.jetty" % "jetty-webapp" % "8.0.0.M3" % "jetty",
+  "org.scala-tools.testing" %% "specs" % "1.6.8" % "test"
 )
 
 // The snapshots frequently have incorrect checksums; ignore them.

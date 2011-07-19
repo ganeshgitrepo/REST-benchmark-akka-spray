@@ -12,7 +12,7 @@ object MemoryHashStore extends RecordStore {
     storeActor !!! Get(key)
   }
 
-  def put(key: Long, value: Record) = {
+  def put(key: Long, value: Record) {
     storeActor !!! Put(key, value)
   }
 }

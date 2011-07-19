@@ -2,12 +2,9 @@ package com.xebia.rest
 
 import akka.actor.Actor
 import akka.actor.Actor._
-import com.xebia.rest.MemoryHashStore._
+import com.xebia.rest.RecordStoreMessages._
 
 object MemoryHashStore extends RecordStore {
-  sealed trait MemoryHashStoreMessage
-  case class Get(id: Long) extends MemoryHashStoreMessage
-  case class Put(id: Long, record: Record) extends MemoryHashStoreMessage
 
   val storeActor = actorOf[MemoryHashStore]
 

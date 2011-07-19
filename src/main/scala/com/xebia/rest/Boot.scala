@@ -8,10 +8,10 @@ import utils.ActorHelpers._
 
 class Boot {
 
-  val memoryHashStore = MemoryHashStore
+  val filesystemStore = FileSystemStore
 
   val mainModule = new RestService {
-    val recordStore = memoryHashStore
+    val recordStore = filesystemStore
   }
 
   // Start all actors that need supervision, including the root service actor.

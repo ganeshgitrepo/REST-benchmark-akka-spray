@@ -3,12 +3,10 @@ package com.xebia.rest
 import akka.actor.Actor._
 import cc.spray.json._
 import RecordJsonProtocol._
-import akka.dispatch.Future
 import io.Source
 import java.io.{FileNotFoundException, FileOutputStream, File}
 import com.xebia.rest.RecordStoreMessages._
 import akka.actor.{PoisonPill, Actor}
-import org.omg.IOP.Codec
 
 object FileSystemStore extends RecordStore {
   def get(key: Long) = {

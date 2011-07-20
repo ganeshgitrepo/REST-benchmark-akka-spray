@@ -12,6 +12,9 @@ object MongoDBLoader {
   def doWithSnippet(coll:MongoCollection)(dbObj:BasicDBObject) = {
     val intN = dbObj.get("intNumber").asInstanceOf[Long]
     dbObj.append("intNumber", intN.toInt)
+    val id = dbObj.get("id").asInstanceOf[Long]
+    dbObj.remove("id")
+    dbObj.append("_id", id)
     coll.insert(dbObj)
   }
 
@@ -51,8 +54,7 @@ object MongoDBLoader {
 
   def main(args: Array[String]) {
 
-    // connect to "mongodb02" host, port 42017
-    val mongoConn = MongoConnection()
+    val mongoConn = MongoConnection("localhost", 27017)
     val collection = mongoConn("perfcontest")("perftest")
     loadJsonData(collection)
 

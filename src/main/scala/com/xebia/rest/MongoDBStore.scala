@@ -8,12 +8,12 @@ import akka.actor.Actor._
 
 object MongoDBStore extends RecordStore {
 
-  lazy val mongoConn = MongoConnection()
+  lazy val mongoConn = MongoConnection("localhost", 27017)
   lazy val collection = mongoConn("perfcontest")("perftest")
 
   def get(key: Long) = {
     Future {
-      val q = MongoDBObject("id" -> key)
+      val q = MongoDBObject("_id" -> key)
       val record = collection.findOne(q)
       unmarshal(record.get)
     }
@@ -27,7 +27,7 @@ object MongoDBStore extends RecordStore {
   }
 
   def unmarshal(obj: DBObject) = {
-    val id = obj.get("id").asInstanceOf[Long]
+    val id = obj.get("_id").asInstanceOf[Long]
     val intNumber = obj.get("intNumber").asInstanceOf[Int]
     val trueOrFalse = obj.get("trueOrFalse").asInstanceOf[Boolean]
     val longStringAttribute = obj.get("longStringAttribute").asInstanceOf[String]
@@ -36,7 +36,7 @@ object MongoDBStore extends RecordStore {
   }
 
   def marshall(key: Long, rec: Record) = {
-    MongoDBObject("id" -> key, "intNumber" -> rec.intNumber, "longStringAttribute" -> rec.longStringAttribute, "shortStringAttribute" -> rec.shortStringAttribute, "trueOrFalse" -> rec.trueOrFalse)
+    MongoDBObject("_id" -> key, "intNumber" -> rec.intNumber, "longStringAttribute" -> rec.longStringAttribute, "shortStringAttribute" -> rec.shortStringAttribute, "trueOrFalse" -> rec.trueOrFalse)
   }
 
 

@@ -11,6 +11,7 @@ class MongoDBStoreTest extends Specification {
       val f = MongoDBStore.get(r.id)
       f.get mustNotBe (None)
       f.get.get.id mustEqual 3l
+      f.get.get.shortStringAttribute mustEqual "abc"
     }
   }
 

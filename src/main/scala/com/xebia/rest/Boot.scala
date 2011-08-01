@@ -22,7 +22,11 @@ class Boot {
     SupervisorConfig(
       OneForOneStrategy(List(classOf[Exception]), 3, 100),
       List(
-        Supervise(actorOf[RootService], Permanent))))
+        Supervise(actorOf[RootService], Permanent),
+        Supervise(MemoryHashStore.storeActor, Permanent)
+      )
+    )
+  )
 
   // attach an HttpService (which is also an actor)
   // the root service automatically starts the HttpService if it is unstarted

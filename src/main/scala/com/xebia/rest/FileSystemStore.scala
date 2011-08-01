@@ -26,12 +26,13 @@ object FileSystemStore extends RecordStore {
 }
 
 class FileSystemStore extends Actor {
+  val encoding = "UTF-8"
   val fsRoot = new File("/tmp/spray")
   def receive = {
     case Get(id) => {
       val recordLocation = new File(fsRoot, id.toString)
       try {
-        val rawRecord = Source.fromFile(recordLocation, "UTF-8").getLines().mkString
+        val rawRecord = Source.fromFile(recordLocation, encoding).getLines().mkString
         self.channel ! Some(JsonParser(rawRecord).fromJson[Record])
       } catch {
         case e:FileNotFoundException => self.channel ! None
@@ -41,7 +42,7 @@ class FileSystemStore extends Actor {
       val pendingRecordLocation = new File(fsRoot, id + '.' + self.uuid.toString)
       val recordOutputStream = new FileOutputStream(pendingRecordLocation)
       try {
-        recordOutputStream.write(value.toJson.toString.getBytes("UTF-8"))
+        recordOutputStream.write(value.toJson.toString.getBytes(encoding))
       } finally {
         recordOutputStream.close()
       }

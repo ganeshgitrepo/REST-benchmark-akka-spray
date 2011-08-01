@@ -5,11 +5,13 @@ import com.mongodb.casbah.commons.MongoDBObject
 import akka.dispatch.Future
 import com.mongodb.DBObject
 import akka.actor.Actor._
+import akka.config.Config._
 
 object MongoDBStore extends RecordStore {
 
-  lazy val mongoConn = MongoConnection("localhost", 27017)
-  lazy val collection = mongoConn("perfcontest")("perftest")
+  lazy val mongoConn = MongoConnection(config.getString("mongodb.host", "localhost"),
+                                       config.getInt("mongodb.port", 27017))
+  lazy val collection = mongoConn(config.getString("mongodb.database").orNull)(config.getString("mongodb.collection").orNull)
 
   def get(key: Long) = {
     Future {

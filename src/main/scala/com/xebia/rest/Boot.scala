@@ -8,22 +8,18 @@ import utils.ActorHelpers._
 
 class Boot {
 
-  val memoryHashStore = MemoryHashStore
+  val filesystemStore = FileSystemStore
 
   val mainModule = new RestService {
-    val recordStore = memoryHashStore
+    val recordStore = filesystemStore
   }
 
   // Start all actors that need supervision, including the root service actor.
-   Supervisor(
+  Supervisor(
     SupervisorConfig(
       OneForOneStrategy(List(classOf[Exception]), 3, 100),
       List(
-        Supervise(actorOf[RootService], Permanent),
-        Supervise(memoryHashStore.storeActor, Permanent)
-      )
-    )
-  )
+        Supervise(actorOf[RootService], Permanent))))
 
   // attach an HttpService (which is also an actor)
   // the root service automatically starts the HttpService if it is unstarted

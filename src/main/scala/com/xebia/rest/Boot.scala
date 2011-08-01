@@ -12,7 +12,7 @@ class Boot {
   val filesystemStore = FileSystemStore
 
   val mainModule = new RestService {
-    val recordstore = config.getString("store.backend", "filestore") match {
+    val recordStore = config.getString("store.backend", "filestore") match {
       case "filestore" => FileSystemStore
       case "memory" => MemoryHashStore
       case "mongodb" => MongoDBStore

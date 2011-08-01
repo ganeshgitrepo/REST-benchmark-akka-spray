@@ -14,13 +14,10 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "cc.spray" %% "spray-http" % "0.7.0-SNAPSHOT" % "compile" withSources(),
-  "cc.spray" %% "spray-server" % "0.7.0-SNAPSHOT" % "compile" withSources(),
+  "cc.spray" %% "spray-http" % "0.7.0" % "compile" withSources(),
+  "cc.spray" %% "spray-server" % "0.7.0" % "compile" withSources(),
   "cc.spray.json" %% "spray-json" % "1.0" % "compile" withSources(),
   "se.scalablesolutions.akka" % "akka-actor" % "1.1.3",
   "se.scalablesolutions.akka" % "akka-http" % "1.1.3",
   "org.eclipse.jetty" % "jetty-webapp" % "8.0.0.M3" % "jetty"
 )
-
-// The snapshots frequently have incorrect checksums; ignore them.
-checksums := Nil

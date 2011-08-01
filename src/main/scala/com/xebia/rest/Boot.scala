@@ -15,7 +15,7 @@ class Boot {
   }
 
   // Start all actors that need supervision, including the root service actor.
-   Supervisor(
+  Supervisor(
     SupervisorConfig(
       OneForOneStrategy(List(classOf[Exception]), 3, 100),
       List(

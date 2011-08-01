@@ -7,6 +7,7 @@ import io.Source
 import java.io.{FileNotFoundException, FileOutputStream, File}
 import com.xebia.rest.RecordStoreMessages._
 import akka.actor.{PoisonPill, Actor}
+import akka.config.Config._
 
 object FileSystemStore extends RecordStore {
   def get(key: Long) = {
@@ -27,7 +28,7 @@ object FileSystemStore extends RecordStore {
 
 class FileSystemStore extends Actor {
   val encoding = "UTF-8"
-  val fsRoot = new File("/tmp/spray")
+  lazy val fsRoot = new File(config.getString("store.root").orNull)
   def receive = {
     case Get(id) => {
       val recordLocation = new File(fsRoot, id.toString)

@@ -8,5 +8,10 @@ target/
 /.idea_modules
 /*.iml
 
+# Eclipse project files.
+/.classpath
+/.project
+/.settings/
+
 # OSX Finder droppings.
 .DS_Store

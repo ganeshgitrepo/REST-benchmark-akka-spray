@@ -9,8 +9,6 @@ import utils.ActorHelpers._
 
 class Boot {
 
-  val filesystemStore = FileSystemStore
-
   val mainModule = new RestService {
     val recordStore = config.getString("store.backend", "filestore") match {
       case "filestore" => FileSystemStore

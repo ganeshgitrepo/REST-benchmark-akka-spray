@@ -29,7 +29,7 @@ object FileSystemStore extends RecordStore {
 
 class FileSystemStore extends Actor {
   val encoding = "UTF-8"
-  lazy val fsRoot = new File(config.getString("store.root").orNull)
+  lazy val fsRoot = new File(config.getString("filestore.root").orNull)
 
   def locationInStore(id: Long): String = id.toString
   def location(id: Long): File = new File(fsRoot, locationInStore(id))

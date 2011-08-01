@@ -40,6 +40,4 @@ object MongoDBStore extends RecordStore {
   def marshall(key: Long, rec: Record) = {
     MongoDBObject("_id" -> key, "intNumber" -> rec.intNumber, "longStringAttribute" -> rec.longStringAttribute, "shortStringAttribute" -> rec.shortStringAttribute, "trueOrFalse" -> rec.trueOrFalse)
   }
-
-
 }

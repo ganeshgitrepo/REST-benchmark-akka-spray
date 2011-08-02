@@ -12,6 +12,8 @@ target/
 /.classpath
 /.project
 /.settings/
+/.target/
+/.scala_dependencies
 
 # OSX Finder droppings.
 .DS_Store

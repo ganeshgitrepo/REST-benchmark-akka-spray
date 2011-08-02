@@ -22,7 +22,6 @@ trait RestService extends Directives with SprayJsonMarshalling {
       path("get" / LongNumber) { id =>
         get { ctx =>
           recordStore.get(id).onComplete(f => {
-		    print("foo")
 	        f.result.get match {
             case Some(record) => ctx.complete(record)
             case None => ctx.fail(StatusCodes.NotFound,"Record with id=" + id + " is not in database.")

@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
   "se.scalablesolutions.akka" % "akka-actor" % "1.1.3",
   "se.scalablesolutions.akka" % "akka-http" % "1.1.3",
   "se.scalablesolutions.akka" % "akka-testkit" % "1.1.3",
-  "org.eclipse.jetty" % "jetty-webapp" % "8.0.0.M3" % "container",
+  "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container",
   "org.scala-tools.testing" %% "specs" % "1.6.8" % "test",
   "net.liftweb" %% "lift-json-ext" % "2.4",
   "net.liftweb" %% "lift-json" % "2.4",

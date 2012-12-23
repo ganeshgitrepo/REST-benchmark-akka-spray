@@ -1,12 +1,12 @@
 Akka/Spray Implementation for theRESTbakeOff[tm]
 
-To build and run this project you need sbt 0.10.1:
+To build and run this project you need sbt 0.11.x:
 
 % sbt
 ...
 > update
 ...
-> jetty-run
+> container:start
 
 The WAR can also be deployed to any container that supports the
 Servlet 3.0 spec; at the moment this is how asynchronous request

@@ -9,8 +9,8 @@ scalaVersion := "2.9.0-1"
 seq(webSettings :_*)
 
 resolvers ++= Seq(
-  ScalaToolsSnapshots,
-  "Akka Repository" at "http://akka.io/repository"
+  ScalaToolsReleases,
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
 libraryDependencies ++= Seq(
@@ -20,9 +20,9 @@ libraryDependencies ++= Seq(
   "se.scalablesolutions.akka" % "akka-actor" % "1.1.3",
   "se.scalablesolutions.akka" % "akka-http" % "1.1.3",
   "se.scalablesolutions.akka" % "akka-testkit" % "1.1.3",
-  "org.eclipse.jetty" % "jetty-webapp" % "8.0.0.M3" % "jetty",
+  "org.eclipse.jetty" % "jetty-webapp" % "8.0.0.M3" % "container",
   "org.scala-tools.testing" %% "specs" % "1.6.8" % "test",
-  "net.liftweb" % "lift-json-ext_2.9.0-1" % "2.4-M4",
-  "net.liftweb" % "lift-json_2.9.0-1" % "2.4-M4",
-  "com.mongodb.casbah" % "casbah_2.9.0-1" % "2.1.5.0"
+  "net.liftweb" %% "lift-json-ext" % "2.4",
+  "net.liftweb" %% "lift-json" % "2.4",
+  "com.mongodb.casbah" %% "casbah" % "2.1.5.0"
 )

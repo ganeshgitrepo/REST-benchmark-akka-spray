@@ -20,7 +20,7 @@ object PostLoader extends App {
     ultimately(jsonFile.close) {
       // Each line is a separate JSON bit.
       jsonFile.getLines.foreach(line => {
-         val record = JsonParser(line).fromJson[Record]
+         val record = JsonParser(line).convertTo[Record]
          totalCount += 1
          val recordId = record.id
          val url = new URL(urlRoot, "/rest/put/" + recordId)

@@ -14,7 +14,7 @@ object FileSystemStore extends RecordStore {
   def get(key: Long) = {
     // Spawn an actor just for this task.
     val newActor = actorOf[ShardingFileSystemStore].start()
-    val futureResult = newActor !!! Get(key)
+    val futureResult = (newActor ? Get(key)).mapTo[Option[Record]]
     newActor ! PoisonPill
     futureResult
   }
@@ -39,7 +39,7 @@ class FileSystemStore extends Actor {
       val recordLocation = location(id)
       try {
         val rawRecord = Source.fromFile(recordLocation, encoding).getLines().mkString
-        self.channel ! Some(JsonParser(rawRecord).fromJson[Record])
+        self.channel ! Some(JsonParser(rawRecord).convertTo[Record])
       } catch {
         case e:FileNotFoundException => self.channel ! None
       }

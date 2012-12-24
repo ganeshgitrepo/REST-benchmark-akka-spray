@@ -17,18 +17,18 @@ class Boot {
     }
   }
 
+  val httpService = actorOf(new HttpService(mainModule.restService))
+  val rootService = actorOf(new RootService(httpService))
+
   // Start all actors that need supervision, including the root service actor.
   Supervisor(
     SupervisorConfig(
       OneForOneStrategy(List(classOf[Exception]), 3, 100),
       List(
-        Supervise(actorOf[RootService], Permanent),
+        Supervise(httpService, Permanent),
+        Supervise(rootService, Permanent),
         Supervise(MemoryHashStore.storeActor, Permanent)
       )
     )
   )
-
-  // attach an HttpService (which is also an actor)
-  // the root service automatically starts the HttpService if it is unstarted
-  actor[RootService] ! Attach(HttpService(mainModule.restService))
 }

@@ -1,18 +1,17 @@
 package com.xebia.rest
 
 import cc.spray._
-import directives.LongNumber
-import http._
-import MediaTypes._
-import marshalling.SprayJsonMarshalling
-import json._
-import RecordJsonProtocol._
 
-trait RestService extends Directives with SprayJsonMarshalling {
+trait RestService extends Directives {
 
   val recordStore: RecordStore
 
   val restService = {
+    import directives.LongNumber
+    import http._
+    import typeconversion.SprayJsonSupport._
+    import RecordJsonProtocol._
+
     // Debugging: /ping -> pong
     path("ping") {
       get { _.complete("pong") }

@@ -9,11 +9,11 @@ object MemoryHashStore extends RecordStore {
   val storeActor = actorOf[MemoryHashStore]
 
   def get(key: Long) = {
-    storeActor !!! Get(key)
+    (storeActor ? Get(key)).mapTo[Option[Record]]
   }
 
   def put(key: Long, value: Record) {
-    storeActor !!! Put(key, value)
+    storeActor ? Put(key, value)
   }
 }
 

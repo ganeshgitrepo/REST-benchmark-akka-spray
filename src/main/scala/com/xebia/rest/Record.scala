@@ -1,6 +1,6 @@
 package com.xebia.rest
 
-import cc.spray.json.DefaultJsonProtocol
+import spray.json.DefaultJsonProtocol
 
 case class Record(id: Long,
                   shortStringAttribute: String,

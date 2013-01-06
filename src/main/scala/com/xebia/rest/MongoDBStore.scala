@@ -2,18 +2,19 @@ package com.xebia.rest
 
 import com.mongodb.casbah.MongoConnection
 import com.mongodb.casbah.commons.MongoDBObject
-import akka.dispatch.Future
 import com.mongodb.DBObject
-import akka.actor.Actor._
-import akka.config.Config._
+import akka.actor.ActorSystem
+import akka.dispatch.Future
 
-object MongoDBStore extends RecordStore {
+class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
 
-  lazy val mongoConn = MongoConnection(config.getString("mongodb.host", "localhost"),
-                                       config.getInt("mongodb.port", 27017))
-  lazy val collection = mongoConn(config.getString("mongodb.database").orNull)(config.getString("mongodb.collection").orNull)
+  lazy val collection = {
+    val config = system.settings.config.getConfig("rest.mongodb")
+    val mongoConn = MongoConnection(config.getString("host"), config.getInt("port"))
+    mongoConn(config.getString("database"))(config.getString("collection"))
+  }
 
-  def get(key: Long) = {
+  override def get(key: Long) = {
     Future {
       val q = MongoDBObject("_id" -> key)
       val record = collection.findOne(q)
@@ -21,8 +22,8 @@ object MongoDBStore extends RecordStore {
     }
   }
 
-  def put(key: Long, value: Record) = {
-    spawn {
+  override def put(key: Long, value: Record) = {
+    Future {
       val dbObj = marshall(key, value)
       collection.insert(dbObj)
     }

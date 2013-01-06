@@ -1,52 +1,54 @@
 package com.xebia.rest
 
-import cc.spray.test.SprayTest
-import cc.spray.http.HttpMethods._
 import org.specs2.mutable.Specification
 import org.specs2.specification._
-import cc.spray.http._
-import cc.spray.json._
+import spray.testkit.Specs2RouteTest
+import spray.http._
+import spray.json._
+import akka.migration._
+import com.xebia.SprayJsonSupport._
+import RecordJsonProtocol._
+import akka.AkkaException
 
-class RestTest extends Specification with SprayTest with RestService {
+class RestTest extends Specification with Specs2RouteTest with RestService {
+  def actorRefFactory = system
 
-  val recordStore = MemoryHashStore
+  val recordStore = new MemoryHashStore
 
-  implicit val context = new Scope with After {
-    val storeActor = recordStore.storeActor
-    storeActor.start()
-
-    def after = {
-      storeActor.stop()
+  "The ReST Service when PINGed" should {
+    "return a PONG response" in {
+      Get("/ping") ~> route ~> check {
+        status === StatusCodes.OK
+        mediaType mustEqual MediaTypes.`text/plain`
+        entityAs[String] mustEqual "pong"
+      }
     }
   }
 
   "The ReST Service when GET" should {
     "return a 404 if the record is not found" in {
-      val response = testService(HttpRequest(GET, "/rest/get/666")) {
-        restService
-      }.response.status mustEqual StatusCodes.NotFound
+      Get("/rest/get/666") ~> route ~> check {
+        status === StatusCodes.NotFound
+      }
     }
 
     "return a 200 status code if the record is found" in {
+      val id = 201
       val record = JsObject(
-        "id" -> JsNumber(201),
+        "id" -> JsNumber(id),
         "shortStringAttribute" -> JsString("bla4"),
         "longStringAttribute" -> JsString("bla blah blah4"),
         "intNumber" -> JsNumber(1004),
         "trueOrFalse" -> JsBoolean(false)
       )
-      testService(HttpRequest(POST, "/rest/put/201",
-        content = Some(HttpContent(ContentType(MediaTypes.`application/json`), record.compactPrint)))) {
-        restService
+      Post("/rest/put/" + id, record) ~> route ~> check {
+        handled must beTrue
       }
-      val response = testService(HttpRequest(GET, "/rest/get/201")) {
-        restService
-      }.response
-
-      response.status mustEqual StatusCodes.OK
-      response.content.map(_.contentType.mediaType) mustEqual Some(MediaTypes.`application/json`)
-      val responseRecord = response.content.map(content => JsonParser(content.buffer.map(_.toChar)))
-      responseRecord mustEqual Some(record)
+      Get("/rest/get/" + id) ~> route ~> check {
+        status === StatusCodes.OK
+        mediaType mustEqual MediaTypes.`application/json`
+        entityAs[JsObject] mustEqual record
+      }
     }
   }
 
@@ -59,12 +61,9 @@ class RestTest extends Specification with SprayTest with RestService {
         "intNumber" -> JsNumber(1004),
         "trueOrFalse" -> JsBoolean(false)
       )
-      val response = testService(HttpRequest(POST, "/rest/put/666",
-        content = Some(HttpContent(ContentType(MediaTypes.`application/json`),
-          record.compactPrint)))) {
-        restService
-      }.response
-      response.status mustEqual StatusCodes.Conflict
+      Post("/rest/put/666", record) ~> route ~> check {
+        status === StatusCodes.Conflict
+      }
     }
 
     "return a 200 if the post succeeds" in {
@@ -75,12 +74,9 @@ class RestTest extends Specification with SprayTest with RestService {
         "intNumber" -> JsNumber(1004),
         "trueOrFalse" -> JsBoolean(false)
       )
-      val response = testService(HttpRequest(POST, "/rest/put/200",
-        content = Some(HttpContent(ContentType(MediaTypes.`application/json`),
-          record.compactPrint)))) {
-        restService
-      }.response
-      response.status mustEqual StatusCodes.OK
+      Post("/rest/put/200", record) ~> route ~> check {
+        status === StatusCodes.OK
+      }
     }
   }
 }

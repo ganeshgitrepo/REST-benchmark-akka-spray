@@ -3,8 +3,8 @@ package com.xebia.load
 import java.net.{HttpURLConnection,URL}
 
 import util.control.Exception._
-import cc.spray.http._
-import cc.spray.json._
+import spray.http._
+import spray.json._
 import com.xebia.rest.{Record,RecordJsonProtocol}
 import RecordJsonProtocol._
 

@@ -1,27 +1,23 @@
 package com.xebia.rest
 
-import akka.actor.Actor
-import akka.actor.Actor._
+import akka.actor.{Props, ActorSystem, OldActor}
 import com.xebia.rest.RecordStoreMessages._
+import akka.migration._
 
-object MemoryHashStore extends RecordStore {
+class MemoryHashStore(implicit system: ActorSystem) extends RecordStore {
 
-  val storeActor = actorOf[MemoryHashStore]
+  val storeActor = system.actorOf(Props(new MemoryHashStoreActor))
 
-  def get(key: Long) = {
-    (storeActor ? Get(key)).mapTo[Option[Record]]
-  }
+  override def get(key: Long) = (storeActor ? Get(key)).mapTo[Option[Record]]
 
-  def put(key: Long, value: Record) {
-    storeActor ? Put(key, value)
-  }
-}
+  override def put(key: Long, value: Record) = storeActor ? Put(key, value)
 
-class MemoryHashStore extends Actor {
-  val records = new collection.mutable.HashMap[Long,Record]()
+  class MemoryHashStoreActor extends OldActor {
+    val records = new collection.mutable.HashMap[Long,Record]()
 
-  protected def receive = {
-    case Get(id) => self.channel ! records.get(id)
-    case Put(id, record) => records += ((id, record))
+    protected def receive = {
+      case Get(id) => self.channel ! records.get(id)
+      case Put(id, record) =>  records += ((id, record))
+    }
   }
 }

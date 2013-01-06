@@ -1,34 +1,18 @@
 package com.xebia.rest
 
-import akka.config.Supervision._
-import akka.actor.Supervisor
-import akka.actor.Actor._
-import akka.config.Config._
-import cc.spray._
-import utils.ActorHelpers._
+import akka.actor.{ActorSystem, Props}
+import spray._
+import servlet.WebBoot
 
-class Boot {
+class Boot extends WebBoot {
 
-  val mainModule = new RestService {
-    val recordStore = config.getString("store.backend", "filestore") match {
-      case "filestore" => FileSystemStore
-      case "memory" => MemoryHashStore
-      case "mongodb" => MongoDBStore
-    }
+  override implicit val system = ActorSystem("default")
+
+  val configuredRecordStore = system.settings.config.getString("rest.store.backend") match {
+    case "filestore" => new FileSystemStore
+    case "memory" => new MemoryHashStore
+    case "mongodb" => new MongoDBStore
   }
 
-  val httpService = actorOf(new HttpService(mainModule.restService))
-  val rootService = actorOf(new RootService(httpService))
-
-  // Start all actors that need supervision, including the root service actor.
-  Supervisor(
-    SupervisorConfig(
-      OneForOneStrategy(List(classOf[Exception]), 3, 100),
-      List(
-        Supervise(httpService, Permanent),
-        Supervise(rootService, Permanent),
-        Supervise(MemoryHashStore.storeActor, Permanent)
-      )
-    )
-  )
+  override val serviceActor = system.actorOf(Props(new RestServiceActor(configuredRecordStore)))
 }

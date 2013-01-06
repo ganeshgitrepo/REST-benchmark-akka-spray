@@ -2,18 +2,20 @@ package com.xebia.rest
 
 import org.specs2.mutable.Specification
 import org.specs2.specification._
+import akka.util.Timeout
 import spray.testkit.Specs2RouteTest
 import spray.http._
 import spray.json._
-import akka.migration._
+import java.util.concurrent.TimeUnit
 import com.xebia.SprayJsonSupport._
+
 import RecordJsonProtocol._
-import akka.AkkaException
 
 class RestTest extends Specification with Specs2RouteTest with RestService {
   def actorRefFactory = system
 
   val recordStore = new MemoryHashStore
+  implicit val storeTimeout = Timeout(2, TimeUnit.SECONDS)
 
   "The ReST Service when PINGed" should {
     "return a PONG response" in {

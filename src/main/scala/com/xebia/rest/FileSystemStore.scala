@@ -1,20 +1,20 @@
 package com.xebia.rest
 
-import akka.actor.OldActor._
+import akka.actor.{Props, ActorSystem, PoisonPill, Actor}
+import akka.pattern.ask
+import akka.util.Timeout
 import spray.json._
-import RecordJsonProtocol._
 import io.Source
 import util.control.Exception._
+
 import java.io.{FileNotFoundException, FileOutputStream, File, OutputStream}
-import com.xebia.rest.RecordStoreMessages._
-import akka.actor.{Props, ActorSystem, PoisonPill, OldActor}
-import akka.config.OldConfig._
-import akka.migration._
 import java.util.UUID
-import akka.dispatch.ExecutionContext
+
+import RecordJsonProtocol._
+import RecordStoreMessages._
 
 class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
-  override def get(key: Long) = {
+  override def get(key: Long)(implicit timeout: Timeout) = {
     // Spawn an actor just for this task.
     val newActor = system.actorOf(Props(new ShardingFileSystemStoreActor))
     val futureResult = (newActor ? Get(key)).mapTo[Option[Record]]
@@ -22,14 +22,14 @@ class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
     futureResult
   }
 
-  override def put(key: Long, value: Record) = {
+  override def put(key: Long, value: Record)(implicit timeout: Timeout) = {
     // Spawn an actor just for this task.
     val newActor = system.actorOf(Props(new ShardingFileSystemStoreActor))
     newActor ! Put(key, value)
     newActor ! PoisonPill
   }
 
-  class FileSystemStoreActor extends OldActor {
+  class FileSystemStoreActor extends Actor {
     val encoding = "UTF-8"
     lazy val fsRoot = new File(system.settings.config.getString("rest.filestore.root"))
     val uuid = UUID.randomUUID
@@ -42,9 +42,9 @@ class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
         val recordLocation = location(id)
         try {
           val rawRecord = Source.fromFile(recordLocation, encoding).getLines().mkString
-          self.channel ! Some(JsonParser(rawRecord).convertTo[Record])
+          sender ! Some(JsonParser(rawRecord).convertTo[Record])
         } catch {
-          case e:FileNotFoundException => self.channel ! None
+          case e:FileNotFoundException => sender ! None
         }
       }
       case Put(id, value) => {

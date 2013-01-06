@@ -1,6 +1,7 @@
 package com.xebia.rest
 
 import akka.actor.Actor
+import akka.util.{Duration, Timeout}
 import spray.http._
 import spray.routing._
 
@@ -8,11 +9,13 @@ class RestServiceActor(store: RecordStore) extends Actor with RestService {
   val recordStore = store
   def actorRefFactory = context
   def receive = runRoute(route)
+  implicit val storeTimeout: Timeout = Duration(actorSystem.settings.config.getString("rest.store.store-timeout"))
 }
 
 trait RestService extends HttpService {
 
   val recordStore: RecordStore
+  implicit val storeTimeout: Timeout
 
   val route = {
     import spray.httpx.SprayJsonSupport._

@@ -6,7 +6,7 @@ organization := "Xebia"
 
 scalaVersion := "2.9.2"
 
-scalacOptions += "-Ydependent-method-types"
+scalacOptions := Seq("-Ydependent-method-types", "-unchecked", "-deprecation")
 
 seq(webSettings :_*)
 
@@ -23,7 +23,6 @@ libraryDependencies ++= Seq(
   "io.spray" %% "spray-json" % "1.2.3" cross CrossVersion.full,
   "com.typesafe.akka" % "akka-actor" % "2.0.5",
   "com.typesafe.akka" % "akka-testkit" % "2.0.5",
-  "com.typesafe.akka" % "akka-actor-migration" % "2.0.5",
   "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container",
   "org.specs2" %% "specs2" % "1.12.3" % "test",
   "net.liftweb" % "lift-json-ext_2.9.0-1" % "2.4",

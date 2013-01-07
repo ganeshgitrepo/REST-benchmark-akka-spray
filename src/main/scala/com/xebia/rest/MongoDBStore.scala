@@ -18,6 +18,7 @@ class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
   override def get(key: Long)(implicit timeout: Timeout) = {
     Future {
       val q = MongoDBObject("_id" -> key)
+      Future.blocking
       val record = collection.findOne(q)
       unmarshal(record.get)
     }
@@ -26,6 +27,7 @@ class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
   override def put(key: Long, value: Record)(implicit timeout: Timeout) = {
     Future {
       val dbObj = marshall(key, value)
+      Future.blocking
       collection.insert(dbObj)
     }
   }

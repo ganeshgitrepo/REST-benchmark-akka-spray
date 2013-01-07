@@ -12,6 +12,7 @@ import java.util.UUID
 
 import RecordJsonProtocol._
 import RecordStoreMessages._
+import akka.dispatch.Future
 
 class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
   override def get(key: Long)(implicit timeout: Timeout) = {
@@ -42,6 +43,7 @@ class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
       case Get(id) => {
         val recordLocation = location(id)
         try {
+          Future.blocking
           val rawRecord = Source.fromFile(recordLocation, encoding).getLines().mkString
           sender ! Some(JsonParser(rawRecord).convertTo[Record])
         } catch {
@@ -50,6 +52,7 @@ class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
       }
       case Put(id, value) => {
         val recordLocation = location(id)
+        Future.blocking
         val pendingRecordLocation = new File(recordLocation.getParentFile,
           recordLocation.getName + '.' + uuid)
         val recordOutputStream = openOutputStream(pendingRecordLocation)

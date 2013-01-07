@@ -41,12 +41,13 @@ trait RestService extends HttpService {
       } ~
       path("put" / LongNumber) { id =>
         post {
-          entity(as[Record]) { record =>
+          entity(as[Record]) { record => ctx =>
             if (record.id == id) {
-              recordStore.put(id, record)
-              complete("")
+              recordStore.put(id, record) onComplete {
+                case Right(result) => ctx.complete("")
+              }
             } else {
-              complete(StatusCodes.Conflict, "The resource ID and ID of the POSTed record do not match.")
+              ctx.complete(StatusCodes.Conflict, "The resource ID and ID of the POSTed record do not match.")
             }
           }
         }

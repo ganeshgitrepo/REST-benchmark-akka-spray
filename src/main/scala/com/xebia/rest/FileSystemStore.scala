@@ -25,8 +25,9 @@ class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
   override def put(key: Long, value: Record)(implicit timeout: Timeout) = {
     // Spawn an actor just for this task.
     val newActor = system.actorOf(Props(new ShardingFileSystemStoreActor))
-    newActor ! Put(key, value)
+    val futureResult = (newActor ? Put(key, value)).mapTo[Unit]
     newActor ! PoisonPill
+    futureResult
   }
 
   class FileSystemStoreActor extends Actor {
@@ -56,6 +57,7 @@ class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
           recordOutputStream.write(value.toJson.toString.getBytes(encoding))
         }
         pendingRecordLocation.renameTo(recordLocation)
+        sender ! ()
       }
     }
 

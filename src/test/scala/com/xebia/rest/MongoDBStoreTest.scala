@@ -12,9 +12,10 @@ class MongoDBStoreTest extends Specification {
       implicit val storeTimeout = Timeout(2, TimeUnit.SECONDS)
       val r = Record(3l, "abc", "abc abc", 45, true)
       val mongoDbStore = new MongoDBStore
-      mongoDbStore.put(r.id, r)
-      val f = mongoDbStore.get(r.id)
-      val result = Await.result(f, Duration(3, TimeUnit.SECONDS)).asInstanceOf[Option[Record]]
+      val fp = mongoDbStore.put(r.id, r)
+      Await.ready(fp, Duration(3, TimeUnit.SECONDS))
+      val fg = mongoDbStore.get(r.id)
+      val result = Await.result(fg, Duration(3, TimeUnit.SECONDS)).asInstanceOf[Option[Record]]
       result mustNotEqual None
       val record = result.get
       record.id mustEqual 3l

@@ -26,5 +26,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-testkit" % "2.1.0",
   "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container",
   "org.specs2" %% "specs2" % "1.12.3" % "test",
-  "org.mongodb" %% "casbah-core" % "2.5.0-SNAPSHOT"
+  "org.mongodb" %% "casbah-core" % "2.5.0-SNAPSHOT",
+  "com.novus" %% "salat-core" % "1.9.2-SNAPSHOT"
 )

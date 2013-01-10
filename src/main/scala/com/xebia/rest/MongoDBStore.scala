@@ -5,7 +5,9 @@ import akka.util.Timeout
 import scala.concurrent._
 import com.mongodb.casbah.MongoConnection
 import com.mongodb.casbah.commons.MongoDBObject
-import com.mongodb.DBObject
+import com.mongodb.casbah.Imports._
+import com.novus.salat._
+import com.novus.salat.global._
 
 class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
 
@@ -19,32 +21,25 @@ class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
 
   override def get(key: Long)(implicit timeout: Timeout) = {
     Future {
-      val q = MongoDBObject("_id" -> key)
       blocking {
-        collection.findOne(q).map(unmarshal(_))
+        val result = collection.findOne(MongoDBObject("_id" -> key))
+        result.foreach(remap(_, "_id" -> "id"))
+        result.map(toRecord(_))
       }
     }
   }
 
   override def put(key: Long, value: Record)(implicit timeout: Timeout) = {
     Future {
-      val dbObj = marshall(key, value)
       blocking {
-        collection.insert(dbObj)
+        val dbObject = toDBObject(value)
+        remap(dbObject, "id" -> "_id")
+        collection.insert(dbObject)
       }
     }
   }
 
-  def unmarshal(obj: DBObject) = {
-    val id = obj.get("_id").asInstanceOf[Long]
-    val intNumber = obj.get("intNumber").asInstanceOf[Int]
-    val trueOrFalse = obj.get("trueOrFalse").asInstanceOf[Boolean]
-    val longStringAttribute = obj.get("longStringAttribute").asInstanceOf[String]
-    val shortStringAttribute = obj.get("shortStringAttribute").asInstanceOf[String]
-    Record(id, shortStringAttribute, longStringAttribute, intNumber, trueOrFalse)
-  }
-
-  def marshall(key: Long, rec: Record) = {
-    MongoDBObject("_id" -> key, "intNumber" -> rec.intNumber, "longStringAttribute" -> rec.longStringAttribute, "shortStringAttribute" -> rec.shortStringAttribute, "trueOrFalse" -> rec.trueOrFalse)
-  }
+  private def remap(dbObject: DBObject, fromTo: (String, String)) = dbObject += (fromTo._2 -> dbObject.removeField(fromTo._1))
+  private def toDBObject(record: Record): DBObject = grater[Record].asDBObject(record)
+  private def toRecord(dbObject: DBObject): Record = grater[Record].asObject(dbObject)
 }

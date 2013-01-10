@@ -17,7 +17,7 @@ class MemoryHashStore(implicit system: ActorSystem) extends RecordStore {
   class MemoryHashStoreActor extends Actor {
     val records = new collection.mutable.HashMap[Long,Record]()
 
-    protected def receive = {
+    def receive = {
       case Get(id) => sender ! records.get(id)
       case Put(id, record) => {
         records += ((id, record))

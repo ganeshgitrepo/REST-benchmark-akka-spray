@@ -1,7 +1,7 @@
 package com.xebia.rest
 
-import akka.dispatch.Future
 import akka.util.Timeout
+import scala.concurrent.Future
 
 trait RecordStore {
   def get(key: Long)(implicit timeout: Timeout): Future[Option[Record]]

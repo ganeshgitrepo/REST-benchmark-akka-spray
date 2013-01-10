@@ -7,12 +7,13 @@ import spray.json._
 import io.Source
 import util.control.Exception._
 
+import scala.concurrent._
+
 import java.io.{FileNotFoundException, FileOutputStream, File, OutputStream}
 import java.util.UUID
 
 import RecordJsonProtocol._
 import RecordStoreMessages._
-import akka.dispatch.Future
 
 class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
   override def get(key: Long)(implicit timeout: Timeout) = {
@@ -43,23 +44,25 @@ class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
       case Get(id) => {
         val recordLocation = location(id)
         try {
-          Future.blocking
-          val rawRecord = Source.fromFile(recordLocation, encoding).getLines().mkString
-          sender ! Some(JsonParser(rawRecord).convertTo[Record])
+          blocking {
+            val rawRecord = Source.fromFile(recordLocation, encoding).getLines().mkString
+            sender ! Some(JsonParser(rawRecord).convertTo[Record])
+          }
         } catch {
           case e:FileNotFoundException => sender ! None
         }
       }
       case Put(id, value) => {
         val recordLocation = location(id)
-        Future.blocking
-        val pendingRecordLocation = new File(recordLocation.getParentFile,
-          recordLocation.getName + '.' + uuid)
-        val recordOutputStream = openOutputStream(pendingRecordLocation)
-        ultimately(recordOutputStream.close) {
-          recordOutputStream.write(value.toJson.toString.getBytes(encoding))
+        blocking {
+          val pendingRecordLocation = new File(recordLocation.getParentFile,
+            recordLocation.getName + '.' + uuid)
+          val recordOutputStream = openOutputStream(pendingRecordLocation)
+          ultimately(recordOutputStream.close) {
+            recordOutputStream.write(value.toJson.toString.getBytes(encoding))
+          }
+          pendingRecordLocation.renameTo(recordLocation)
         }
-        pendingRecordLocation.renameTo(recordLocation)
         sender ! ()
       }
     }

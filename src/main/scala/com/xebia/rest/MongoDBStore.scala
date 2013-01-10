@@ -1,8 +1,8 @@
 package com.xebia.rest
 
 import akka.actor.ActorSystem
-import akka.dispatch.Future
 import akka.util.Timeout
+import scala.concurrent._
 import com.mongodb.casbah.MongoConnection
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject
@@ -15,20 +15,24 @@ class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
     mongoConn(config.getString("database"))(config.getString("collection"))
   }
 
+  import system.dispatcher
+
   override def get(key: Long)(implicit timeout: Timeout) = {
     Future {
       val q = MongoDBObject("_id" -> key)
-      Future.blocking
-      val record = collection.findOne(q)
-      unmarshal(record.get)
+      blocking {
+        val record = collection.findOne(q)
+        unmarshal(record.get)
+      }
     }
   }
 
   override def put(key: Long, value: Record)(implicit timeout: Timeout) = {
     Future {
       val dbObj = marshall(key, value)
-      Future.blocking
-      collection.insert(dbObj)
+      blocking {
+        collection.insert(dbObj)
+      }
     }
   }
 

@@ -1,8 +1,9 @@
 package com.xebia.rest
 
 import org.specs2.mutable.Specification
-import akka.dispatch.Await
-import akka.util.{Timeout, Duration}
+import akka.util.Timeout
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 
 class MongoDBStoreTest extends Specification {

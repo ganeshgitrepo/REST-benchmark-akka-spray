@@ -24,4 +24,13 @@ class MongoDBStoreTest extends Specification {
     }
   }
 
+  "The MongoDBStore when get" should {
+    "return None if the record isn't in the database" in new AkkaTestkitContext {
+      implicit val storeTimeout = Timeout(2, TimeUnit.SECONDS)
+      val mongoDbStore = new MongoDBStore
+      val fg = mongoDbStore.get(213)
+      val result = Await.result(fg, Duration(3, TimeUnit.SECONDS)).asInstanceOf[Option[Record]]
+      result must beNone
+    }
+  }
 }

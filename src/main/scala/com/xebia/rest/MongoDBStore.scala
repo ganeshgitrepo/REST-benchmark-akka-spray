@@ -21,8 +21,7 @@ class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
     Future {
       val q = MongoDBObject("_id" -> key)
       blocking {
-        val record = collection.findOne(q)
-        unmarshal(record.get)
+        collection.findOne(q).map(unmarshal(_))
       }
     }
   }
@@ -42,7 +41,7 @@ class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
     val trueOrFalse = obj.get("trueOrFalse").asInstanceOf[Boolean]
     val longStringAttribute = obj.get("longStringAttribute").asInstanceOf[String]
     val shortStringAttribute = obj.get("shortStringAttribute").asInstanceOf[String]
-    Some(Record(id, shortStringAttribute, longStringAttribute, intNumber, trueOrFalse))
+    Record(id, shortStringAttribute, longStringAttribute, intNumber, trueOrFalse)
   }
 
   def marshall(key: Long, rec: Record) = {

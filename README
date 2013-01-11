@@ -1,6 +1,6 @@
 Akka/Spray Implementation for theRESTbakeOff[tm]
 
-To build and run this project you need sbt 0.11.x:
+To build and run this project you need sbt 0.12.x:
 
 % sbt
 ...
@@ -13,13 +13,13 @@ Servlet 3.0 spec; at the moment this is how asynchronous request
 processing is supported.
 
 The current implementation uses:
- - Akka Mist for dispatching HTTP requests along a service bus;
- - Spray for picking up requests from the service bus and dispatching to a backend;
- - Backends with various actor implementations to fulfill the put/get requests.
+ - Backends with various actor implementations to act as key-value stores.
+ - Spray Routing to dispatch HTTP requests to the appropriate storage backend.
+ - Akka for actor support.
 
 We currently have the following backends:
  - Memory-based hash map. (Single-actor.)
- - Filesystem sharding. (Actor-per-request.)
+ - Filesystem (with multi-directory sharding). (Actor-per-request.)
  - MongoDB. (Actor-per-request.)
 
-The backends can be configured by editing akka.conf.
+The backends can be configured by editing application.conf.

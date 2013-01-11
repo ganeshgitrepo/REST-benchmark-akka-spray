@@ -9,7 +9,7 @@ import com.mongodb.casbah.Imports._
 import com.novus.salat._
 import com.novus.salat.global._
 
-class MongoDBStore(implicit system: ActorSystem) extends RecordStore {
+class MongoDBStore(system: ActorSystem) extends RecordStore {
 
   lazy val collection = {
     val config = system.settings.config.getConfig("rest.mongodb")

@@ -14,7 +14,7 @@ import RecordJsonProtocol._
 class RestTest extends Specification with Specs2RouteTest with RestService {
   def actorRefFactory = system
 
-  val recordStore = new MemoryHashStore
+  val recordStore = new MemoryHashStore(system)
   implicit val storeTimeout = Timeout(2, TimeUnit.SECONDS)
 
   "The ReST Service when PINGed" should {

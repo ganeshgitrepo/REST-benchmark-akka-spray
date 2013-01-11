@@ -6,7 +6,7 @@ import akka.util.Timeout
 
 import RecordStoreMessages._
 
-class MemoryHashStore(implicit system: ActorSystem) extends RecordStore {
+class MemoryHashStore(system: ActorSystem) extends RecordStore {
 
   val storeActor = system.actorOf(Props(new MemoryHashStoreActor))
 

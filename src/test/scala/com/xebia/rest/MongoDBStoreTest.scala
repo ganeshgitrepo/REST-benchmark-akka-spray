@@ -12,7 +12,7 @@ class MongoDBStoreTest extends Specification {
     "store and retrieve the record correctly" in new AkkaTestkitContext {
       implicit val storeTimeout = Timeout(2, TimeUnit.SECONDS)
       val r = Record(3l, "abc", "abc abc", 45, true)
-      val mongoDbStore = new MongoDBStore
+      val mongoDbStore = new MongoDBStore(system)
       val fp = mongoDbStore.put(r.id, r)
       Await.ready(fp, Duration(3, TimeUnit.SECONDS))
       val fg = mongoDbStore.get(r.id)
@@ -27,7 +27,7 @@ class MongoDBStoreTest extends Specification {
   "The MongoDBStore when get" should {
     "return None if the record isn't in the database" in new AkkaTestkitContext {
       implicit val storeTimeout = Timeout(2, TimeUnit.SECONDS)
-      val mongoDbStore = new MongoDBStore
+      val mongoDbStore = new MongoDBStore(system)
       val fg = mongoDbStore.get(213)
       val result = Await.result(fg, Duration(3, TimeUnit.SECONDS))
       result must beNone

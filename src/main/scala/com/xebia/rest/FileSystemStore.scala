@@ -15,7 +15,7 @@ import java.util.UUID
 import RecordJsonProtocol._
 import RecordStoreMessages._
 
-class FileSystemStore(implicit system: ActorSystem) extends RecordStore {
+class FileSystemStore(system: ActorSystem) extends RecordStore {
   override def get(key: Long)(implicit timeout: Timeout) = {
     // Spawn an actor just for this task.
     val newActor = system.actorOf(Props(new ShardingFileSystemStoreActor))
